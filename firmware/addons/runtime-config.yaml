@@ -21,11 +21,11 @@ button:
     name: "Re-Detect Decoder"
     entity_category: "config"
     icon: "mdi:cog-refresh"
-    on_press:
-      - uart.write:
-          id: handset_tx
-          data: [ 0x0 ]
-      - standing_desk_height.detect_decoder: desk_height
+    #on_press:
+    #  - uart.write:
+    #      id: handset_tx
+    #      data: [ 0x0 ]
+    #  - standing_desk_height.detect_decoder: desk_height
 
 number:
   - platform: template
