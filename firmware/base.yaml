@@ -12,7 +12,7 @@ esphome:
           data: [ 0xAA, 0xFF, 0x00, 0x50, 0x2B, 0x08 ]
   project:
     name: tj_horner.upsy_desky
-    version: "2.0.0"
+    version: "3.0.0"
 
 external_components:
   - source:
@@ -38,6 +38,8 @@ uart:
   
 esp32:
   board: esp32dev
+  framework:
+    type: esp-idf
 
 # Configurable options
 substitutions:
