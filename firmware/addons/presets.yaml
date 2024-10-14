@@ -1,30 +1,3 @@
-output:
-  - platform: gpio
-    inverted: true
-    id: button_bit1
-    pin:
-      number: ${button_bit1_pin}
-      allow_other_uses: true
-
-  - platform: gpio
-    inverted: true
-    id: button_bit2
-    pin:
-      number: ${button_bit2_pin}
-      allow_other_uses: true
-
-  - platform: gpio
-    inverted: true
-    id: button_bit4
-    pin:
-      number: ${button_bit4_pin}
-
-  - platform: gpio
-    inverted: true
-    id: button_m
-    pin:
-      number: ${button_m_pin}
-
 button:
   # Recall Presets
   - platform: template
@@ -32,42 +5,36 @@ button:
     name: "Preset 1"
     icon: "mdi:numeric-1-box"
     on_press:
-      - output.turn_on: button_bit1
-      - output.turn_on: button_bit2
-      - delay: 1s
-      - output.turn_off: button_bit2
-      - output.turn_off: button_bit1
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x00, 0x48, 0x2A, 0x3E};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   - platform: template
     id: recall_preset_2
     name: "Preset 2"
     icon: "mdi:numeric-2-box"
     on_press:
-      - output.turn_on: button_bit4
-      - delay: 100ms
-      - output.turn_off: button_bit4
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x01, 0x48, 0x10, 0x33};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   - platform: template
     id: recall_preset_3
     name: "Preset 3"
     icon: "mdi:numeric-3-box"
     on_press:
-      - output.turn_on: button_bit2
-      - output.turn_on: button_bit4
-      - delay: 100ms
-      - output.turn_off: button_bit4
-      - output.turn_off: button_bit2
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x02, 0x48, 0x5E, 0x24};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   - platform: template
     id: recall_preset_4
     name: "Preset 4"
     icon: "mdi:numeric-4-box"
     on_press:
-      - output.turn_on: button_bit4
-      - output.turn_on: button_bit1
-      - delay: 100ms
-      - output.turn_off: button_bit1
-      - output.turn_off: button_bit4
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x03, 0x48, 0x64, 0x29};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   # Set Presets
   - platform: template
@@ -75,37 +42,52 @@ button:
     entity_category: "config"
     icon: "mdi:numeric-1-box-multiple"
     on_press:
-      - output.turn_on: button_m
-      - delay: 100ms
-      - output.turn_off: button_m
-      - button.press: recall_preset_1
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x00, 0x44, 0x2C, 0x85};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   - platform: template
     name: "Set Preset 2"
     entity_category: "config"
     icon: "mdi:numeric-2-box-multiple"
     on_press:
-      - output.turn_on: button_m
-      - delay: 100ms
-      - output.turn_off: button_m
-      - button.press: recall_preset_2
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x01, 0x44, 0x16, 0x88};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
 
   - platform: template
     name: "Set Preset 3"
     entity_category: "config"
     icon: "mdi:numeric-3-box-multiple"
     on_press:
-      - output.turn_on: button_m
-      - delay: 100ms
-      - output.turn_off: button_m
-      - button.press: recall_preset_3
-
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x02, 0x44, 0x58, 0x9F};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
+          
   - platform: template
     name: "Set Preset 4"
     entity_category: "config"
     icon: "mdi:numeric-4-box-multiple"
     on_press:
-      - output.turn_on: button_m
-      - delay: 100ms
-      - output.turn_off: button_m
-      - button.press: recall_preset_4
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xFF, 0x03, 0x44, 0x62, 0x92};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
+
+#Specials
+  - platform: template
+    name: "display inch"
+    entity_category: "config"
+    icon: "mdi:ruler"
+    on_press:
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xF2, 0x31, 0x00, 0xDC, 0x05, 0x00, 0x00, 0x05, 0x00, 0x90, 0x02, 0x5D, 0x02, 0x38, 0x00, 0x05, 0x00, 0x08, 0x00, 0x04, 0x00, 0x02, 0x00, 0x00, 0x00, 0x0B, 0xCC};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));
+
+  - platform: template
+    name: "display cm"
+    entity_category: "config"
+    icon: "mdi:ruler"
+    on_press:
+      - lambda: |-
+          uint8_t preset_message[] = {0xAA, 0xF2, 0x31, 0x00, 0xDC, 0x05, 0x01, 0x00, 0x05, 0x00, 0x90, 0x02, 0x5D, 0x02, 0x38, 0x00, 0x05, 0x00, 0x08, 0x00, 0x04, 0x00, 0x02, 0x00, 0x00, 0x00, 0x69, 0xED};
+          id(desk_keypad_control).inject_message(preset_message, sizeof(preset_message));

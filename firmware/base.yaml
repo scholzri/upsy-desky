@@ -4,20 +4,44 @@ esphome:
   friendly_name: "${friendly_name}"
   name_add_mac_suffix: true
   min_version: "2024.6.0"
-  on_boot:
-    then:
-      # Wakes up the desk and reports height
-      - uart.write:
-          id: handset_tx
-          data: [ 0x0 ]
+ #on_boot:
+ #   then:
+ #     # Wakes up the desk and reports height
+ #     - lambda: |-
+ #         std::vector<uint8_t> preset_message = {0xAA, 0xFF, 0x00, 0x48, 0x2A, 0x3E};
+ #         id(desk_keypad_control).inject_message(preset_message);
   project:
     name: tj_horner.upsy_desky
     version: "4.0.0"
 
+external_components:
+  - source:
+      type: git
+      url: https://github.com/scholzri/esphome-standing-desk
+      ref: master
+    components: [ desk_keypad ]
+    refresh: 0s
+    
+#uart_mitm:
+#  uart1: keypad
+#  uart2: controlbox
+
+desk_keypad:
+  id: desk_keypad_control
+  keypad_uart: keypad
+  controlbox_uart: controlbox
+  injection_interval: 38ms
+  height_sensor: desk_height
+
 uart:
-  id: handset_tx
-  tx_pin: 16
-  baud_rate: 9600
+ - id: keypad
+   rx_pin: 19
+   tx_pin: 18
+   baud_rate: 19200
+ - id: controlbox
+   rx_pin: 17
+   tx_pin: 16
+   baud_rate: 19200
 
 esp32:
   board: esp32dev
@@ -29,30 +53,25 @@ substitutions:
   name: "upsy-desky"
   friendly_name: "Upsy Desky"
   desk_height_name: "Desk Height"
-  target_desk_height_name: "Target Desk Height"
-
+  target_desk_height_name: "Target Desk Height" 
+  
   # Standing Desk Component Config
-  standing_desk_uart_rx_pin: "17"
-  standing_desk_up_pin: "21"
-  standing_desk_down_pin: "22"
-  standing_desk_min_height: "25.2"
-  standing_desk_max_height: "50.8"
-
-  # Presets Addon Config
-  button_bit1_pin: "21"
-  button_bit2_pin: "22"
-  button_bit4_pin: "19"
-  button_m_pin: "18"
+  standing_desk_min_height: "61"
+  standing_desk_max_height: "126"
 
   # Runtime Config Defaults
-  default_height_units: "in" # Must be "in" or "cm"
+  default_height_units: "cm" # Must be "in" or "cm"
 
 packages:
-  standing_desk: github://tjhorner/esphome-standing-desk/configs/template.yaml
+  standing_desk:
+    url: https://github.com/scholzri/esphome-standing-desk
+    ref: master
+    file: configs/template.yaml
+    refresh: 0s
   addon_presets: !include addons/presets.yaml
   addon_stable_ids: !include addons/stable-ids.yaml
   addon_runtime_config: !include addons/runtime-config.yaml
-
+  
 button:
   - platform: restart
     name: "Restart"
