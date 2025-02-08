@@ -12,7 +12,7 @@ esphome:
  #         id(desk_keypad_control).inject_message(preset_message);
   project:
     name: tj_horner.upsy_desky
-    version: "4.0.0"
+    version: "4.0.2"
 
 external_components:
   - source:
